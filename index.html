@@ -3,739 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MelodyStream - Ваша музыкальная платформа</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #ff2d55;
-            --secondary-color: #5856d6;
-            --background-color: #000;
-            --card-color: #1c1c1e;
-            --text-color: #ffffff;
-            --text-secondary: #8e8e93;
-            --player-bg: #1c1c1e;
-            --progress-bg: #48484a;
-            --progress-fill: #ff2d55;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
-        
-        body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            padding-bottom: 180px;
-        }
-        
-        /* Шапка */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            position: sticky;
-            top: 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            z-index: 100;
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        
-        /* Основной контент */
-        .main-content {
-            padding: 0 20px;
-        }
-        
-        .section {
-            margin-bottom: 40px;
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .section-title {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        
-        .see-all {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 500;
-        }
-        
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 16px;
-        }
-        
-        .card {
-            background-color: var(--card-color);
-            border-radius: 12px;
-            padding: 16px;
-            transition: transform 0.3s, background-color 0.3s;
-            cursor: pointer;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            background-color: #2c2c2e;
-        }
-        
-        .card-image {
-            width: 100%;
-            aspect-ratio: 1;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-        
-        .card-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .card-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-            font-size: 16px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .card-description {
-            color: var(--text-secondary);
-            font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        /* iOS-стиль плеера */
-        .player {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: var(--player-bg);
-            padding: 20px;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            transition: transform 0.4s ease;
-        }
-        
-        .player.minimized {
-            transform: translateY(calc(100% - 80px));
-        }
-        
-        .player-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .player-title {
-            font-size: 16px;
-            font-weight: 600;
-        }
-        
-        .player-close {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 20px;
-            cursor: pointer;
-        }
-        
-        .track-info {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        
-        .track-image {
-            width: 280px;
-            height: 280px;
-            border-radius: 12px;
-            margin: 0 auto 25px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-        }
-        
-        .track-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .track-name {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        
-        .track-artist {
-            color: var(--text-secondary);
-            font-size: 18px;
-        }
-        
-        .progress-container {
-            margin-bottom: 25px;
-        }
-        
-        .progress-bar {
-            height: 4px;
-            background-color: var(--progress-bg);
-            border-radius: 2px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            position: relative;
-        }
-        
-        .progress {
-            height: 100%;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            border-radius: 2px;
-            width: 30%;
-            position: relative;
-        }
-        
-        .progress::after {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--text-color);
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        }
-        
-        .progress-time {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        
-        .player-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 300px;
-            margin: 0 auto;
-        }
-        
-        .control-button {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 20px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-        
-        .control-button:hover {
-            transform: scale(1.1);
-        }
-        
-        .control-button.play-pause {
-            width: 64px;
-            height: 64px;
-            background-color: var(--text-color);
-            color: var(--background-color);
-            border-radius: 50%;
-            font-size: 24px;
-        }
-        
-        .control-button.play-pause:hover {
-            transform: scale(1.05);
-        }
-        
-        .volume-controls {
-            display: flex;
-            align-items: center;
-            margin-top: 20px;
-            max-width: 200px;
-            margin: 20px auto 0;
-        }
-        
-        .volume-icon {
-            margin-right: 10px;
-            color: var(--text-secondary);
-        }
-        
-        .volume-bar {
-            height: 4px;
-            background-color: var(--progress-bg);
-            border-radius: 2px;
-            flex: 1;
-            cursor: pointer;
-            position: relative;
-        }
-        
-        .volume-level {
-            height: 100%;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            border-radius: 2px;
-            width: 70%;
-        }
-        
-        /* Анимации */
-        @keyframes rotateAlbumArt {
-            0% { transform: rotate(0); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .playing .track-image {
-            animation: rotateAlbumArt 20s linear infinite;
-        }
-        
-        /* Медиа-запросы для адаптивности */
-        @media (max-width: 768px) {
-            .track-image {
-                width: 220px;
-                height: 220px;
-            }
-            
-            .cards-container {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .track-image {
-                width: 180px;
-                height: 180px;
-            }
-            
-            .cards-container {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            }
-            
-            .player-controls {
-                max-width: 260px;
-            }
-        }
-    </style>
+    <title>MySocial - Ваша социальная сеть</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Шапка -->
-    <div class="header">
-        <div class="logo">MelodyStream</div>
-        <div class="user-menu">
-            <span>Привет, Алексей!</span>
-            <div class="user-avatar">А</div>
-        </div>
-    </div>
-    
-    <!-- Основной контент -->
-    <div class="main-content">
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">Недавно прослушанное</h2>
-                <a href="#" class="see-all">Все</a>
-            </div>
-            <div class="cards-container">
-                <div class="card" data-track="Blinding Lights" data-artist="The Weeknd" data-cover="cover1">
-                    <div class="card-image" style="background: linear-gradient(135deg, #ff2d55, #5856d6);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">TW</div>
-                    </div>
-                    <div class="card-title">Blinding Lights</div>
-                    <div class="card-description">The Weeknd</div>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>MySocial</h1>
                 </div>
-                <div class="card" data-track="As It Was" data-artist="Harry Styles" data-cover="cover2">
-                    <div class="card-image" style="background: linear-gradient(135deg, #34c759, #007aff);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">HS</div>
-                    </div>
-                    <div class="card-title">As It Was</div>
-                    <div class="card-description">Harry Styles</div>
+                <div class="search">
+                    <input type="text" placeholder="Поиск">
                 </div>
-                <div class="card" data-track="Stay" data-artist="The Kid LAROI, Justin Bieber" data-cover="cover3">
-                    <div class="card-image" style="background: linear-gradient(135deg, #ffcc00, #ff9500);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">KL</div>
-                    </div>
-                    <div class="card-title">Stay</div>
-                    <div class="card-description">The Kid LAROI, Justin Bieber</div>
-                </div>
-                <div class="card" data-track="Easy On Me" data-artist="Adele" data-cover="cover4">
-                    <div class="card-image" style="background: linear-gradient(135deg, #af52de, #5856d6);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">AD</div>
-                    </div>
-                    <div class="card-title">Easy On Me</div>
-                    <div class="card-description">Adele</div>
+                <nav class="nav">
+                    <a href="#" class="nav-item active">Моя страница</a>
+                    <a href="#" class="nav-item">Друзья</a>
+                    <a href="#" class="nav-item">Сообщения</a>
+                    <a href="#" class="nav-item">Новости</a>
+                </nav>
+                <div class="user-menu">
+                    <div class="user-avatar"></div>
+                    <span class="user-name">Иван Иванов</span>
                 </div>
             </div>
         </div>
-        
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">Рекомендуем послушать</h2>
-                <a href="#" class="see-all">Все</a>
-            </div>
-            <div class="cards-container">
-                <div class="card" data-track="Heat Waves" data-artist="Glass Animals" data-cover="cover5">
-                    <div class="card-image" style="background: linear-gradient(135deg, #ff3b30, #ff9500);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">GA</div>
-                    </div>
-                    <div class="card-title">Heat Waves</div>
-                    <div class="card-description">Glass Animals</div>
-                </div>
-                <div class="card" data-track="Shivers" data-artist="Ed Sheeran" data-cover="cover6">
-                    <div class="card-image" style="background: linear-gradient(135deg, #34c759, #007aff);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">ES</div>
-                    </div>
-                    <div class="card-title">Shivers</div>
-                    <div class="card-description">Ed Sheeran</div>
-                </div>
-                <div class="card" data-track="Good 4 U" data-artist="Olivia Rodrigo" data-cover="cover7">
-                    <div class="card-image" style="background: linear-gradient(135deg, #ff2d55, #af52de);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">OR</div>
-                    </div>
-                    <div class="card-title">Good 4 U</div>
-                    <div class="card-description">Olivia Rodrigo</div>
-                </div>
-                <div class="card" data-track="Levitating" data-artist="Dua Lipa" data-cover="cover8">
-                    <div class="card-image" style="background: linear-gradient(135deg, #5856d6, #007aff);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">DL</div>
-                    </div>
-                    <div class="card-title">Levitating</div>
-                    <div class="card-description">Dua Lipa</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">Популярные плейлисты</h2>
-                <a href="#" class="see-all">Все</a>
-            </div>
-            <div class="cards-container">
-                <div class="card" data-track="Топ 100: Глобальные хиты" data-artist="Популярная музыка" data-cover="playlist1">
-                    <div class="card-image" style="background: linear-gradient(135deg, #ff2d55, #ff9500);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">🔥</div>
-                    </div>
-                    <div class="card-title">Топ 100: Глобальные хиты</div>
-                    <div class="card-description">Популярная музыка</div>
-                </div>
-                <div class="card" data-track="Чилл-вечеринка" data-artist="Расслабляющие треки" data-cover="playlist2">
-                    <div class="card-image" style="background: linear-gradient(135deg, #34c759, #007aff);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">🌙</div>
-                    </div>
-                    <div class="card-title">Чилл-вечеринка</div>
-                    <div class="card-description">Расслабляющие треки</div>
-                </div>
-                <div class="card" data-track="Энергия тренировки" data-artist="Мощные биты" data-cover="playlist3">
-                    <div class="card-image" style="background: linear-gradient(135deg, #ffcc00, #ff3b30);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">💪</div>
-                    </div>
-                    <div class="card-title">Энергия тренировки</div>
-                    <div class="card-description">Мощные биты</div>
-                </div>
-                <div class="card" data-track="Фон для работы" data-artist="Инструментальная музыка" data-cover="playlist4">
-                    <div class="card-image" style="background: linear-gradient(135deg, #af52de, #5856d6);">
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">💼</div>
-                    </div>
-                    <div class="card-title">Фон для работы</div>
-                    <div class="card-description">Инструментальная музыка</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- iOS-стиль плеера -->
-    <div class="player minimized">
-        <div class="player-header">
-            <div class="player-title">Сейчас играет</div>
-            <button class="player-close" id="minimize-player">
-                <i class="fas fa-chevron-down"></i>
-            </button>
-        </div>
-        
-        <div class="track-info">
-            <div class="track-image">
-                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #ff2d55, #5856d6); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">TW</div>
-            </div>
-            <div class="track-name">Blinding Lights</div>
-            <div class="track-artist">The Weeknd</div>
-        </div>
-        
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress"></div>
-            </div>
-            <div class="progress-time">
-                <span class="current-time">1:23</span>
-                <span class="total-time">3:45</span>
-            </div>
-        </div>
-        
-        <div class="player-controls">
-            <button class="control-button" id="shuffle">
-                <i class="fas fa-random"></i>
-            </button>
-            <button class="control-button" id="prev">
-                <i class="fas fa-backward-step"></i>
-            </button>
-            <button class="control-button play-pause" id="play-pause">
-                <i class="fas fa-play"></i>
-            </button>
-            <button class="control-button" id="next">
-                <i class="fas fa-forward-step"></i>
-            </button>
-            <button class="control-button" id="repeat">
-                <i class="fas fa-repeat"></i>
-            </button>
-        </div>
-        
-        <div class="volume-controls">
-            <div class="volume-icon">
-                <i class="fas fa-volume-high"></i>
-            </div>
-            <div class="volume-bar">
-                <div class="volume-level"></div>
-            </div>
-        </div>
-    </div>
+    </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Элементы плеера
-            const player = document.querySelector('.player');
-            const minimizeButton = document.getElementById('minimize-player');
-            const playPauseButton = document.getElementById('play-pause');
-            const progressBar = document.querySelector('.progress-bar');
-            const progress = document.querySelector('.progress');
-            const volumeBar = document.querySelector('.volume-bar');
-            const volumeLevel = document.querySelector('.volume-level');
-            const currentTimeEl = document.querySelector('.current-time');
-            const totalTimeEl = document.querySelector('.total-time');
-            const trackImage = document.querySelector('.track-image');
-            const trackName = document.querySelector('.track-name');
-            const trackArtist = document.querySelector('.track-artist');
-            
-            // Состояние плеера
-            let isPlaying = false;
-            let isMinimized = true;
-            let currentTrackIndex = 0;
-            let progressInterval;
-            
-            // Треки
-            const tracks = [
-                {
-                    name: "Blinding Lights",
-                    artist: "The Weeknd",
-                    cover: "TW",
-                    color: "linear-gradient(135deg, #ff2d55, #5856d6)",
-                    duration: "3:45"
-                },
-                {
-                    name: "As It Was",
-                    artist: "Harry Styles",
-                    cover: "HS",
-                    color: "linear-gradient(135deg, #34c759, #007aff)",
-                    duration: "2:47"
-                },
-                {
-                    name: "Stay",
-                    artist: "The Kid LAROI, Justin Bieber",
-                    cover: "KL",
-                    color: "linear-gradient(135deg, #ffcc00, #ff9500)",
-                    duration: "2:21"
-                },
-                {
-                    name: "Easy On Me",
-                    artist: "Adele",
-                    cover: "AD",
-                    color: "linear-gradient(135deg, #af52de, #5856d6)",
-                    duration: "3:44"
-                }
-            ];
-            
-            // Воспроизведение/пауза
-            playPauseButton.addEventListener('click', function() {
-                isPlaying = !isPlaying;
-                playPauseButton.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
-                
-                if (isPlaying) {
-                    player.classList.add('playing');
-                    startProgress();
-                } else {
-                    player.classList.remove('playing');
-                    clearInterval(progressInterval);
-                }
-            });
-            
-            // Минимизация/развертывание плеера
-            minimizeButton.addEventListener('click', function() {
-                isMinimized = !isMinimized;
-                player.classList.toggle('minimized', isMinimized);
-                minimizeButton.innerHTML = isMinimized ? '<i class="fas fa-chevron-up"></i>' : '<i class="fas fa-chevron-down"></i>';
-            });
-            
-            // Прогресс трека
-            function startProgress() {
-                clearInterval(progressInterval);
-                let progressPercent = parseFloat(progress.style.width) || 0;
-                
-                progressInterval = setInterval(() => {
-                    if (!isPlaying) return;
-                    
-                    progressPercent += 0.5;
-                    progress.style.width = progressPercent + '%';
-                    
-                    // Обновление времени
-                    updateTime(progressPercent);
-                    
-                    if (progressPercent >= 100) {
-                        clearInterval(progressInterval);
-                        nextTrack();
-                    }
-                }, 1000);
-            }
-            
-            function updateTime(percent) {
-                const totalSeconds = 225; // 3:45 в секундах
-                const currentSeconds = Math.floor(totalSeconds * percent / 100);
-                const minutes = Math.floor(currentSeconds / 60);
-                const seconds = currentSeconds % 60;
-                currentTimeEl.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            }
-            
-            // Перемотка
-            progressBar.addEventListener('click', function(e) {
-                if (!isPlaying) return;
-                
-                const rect = this.getBoundingClientRect();
-                const percent = (e.clientX - rect.left) / rect.width;
-                progress.style.width = (percent * 100) + '%';
-                
-                updateTime(percent * 100);
-            });
-            
-            // Громкость
-            volumeBar.addEventListener('click', function(e) {
-                const rect = this.getBoundingClientRect();
-                const percent = (e.clientX - rect.left) / rect.width;
-                volumeLevel.style.width = (percent * 100) + '%';
-            });
-            
-            // Следующий трек
-            document.getElementById('next').addEventListener('click', nextTrack);
-            
-            function nextTrack() {
-                currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-                loadTrack(currentTrackIndex);
-            }
-            
-            // Предыдущий трек
-            document.getElementById('prev').addEventListener('click', function() {
-                currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-                loadTrack(currentTrackIndex);
-            });
-            
-            // Загрузка трека
-            function loadTrack(index) {
-                const track = tracks[index];
-                trackName.textContent = track.name;
-                trackArtist.textContent = track.artist;
-                trackImage.innerHTML = `<div style="width: 100%; height: 100%; background: ${track.color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">${track.cover}</div>`;
-                totalTimeEl.textContent = track.duration;
-                progress.style.width = '0%';
-                currentTimeEl.textContent = '0:00';
-                
-                if (isPlaying) {
-                    player.classList.add('playing');
-                    startProgress();
-                }
-            }
-            
-            // Клик по карточкам
-            const cards = document.querySelectorAll('.card');
-            cards.forEach((card, index) => {
-                card.addEventListener('click', function() {
-                    const trackName = this.getAttribute('data-track');
-                    const trackArtist = this.getAttribute('data-artist');
-                    
-                    // Находим индекс трека в массиве
-                    const trackIndex = tracks.findIndex(track => 
-                        track.name === trackName && track.artist === trackArtist);
-                    
-                    if (trackIndex !== -1) {
-                        currentTrackIndex = trackIndex;
-                        loadTrack(currentTrackIndex);
-                        
-                        // Разворачиваем плеер, если он свернут
-                        if (isMinimized) {
-                            isMinimized = false;
-                            player.classList.remove('minimized');
-                            minimizeButton.innerHTML = '<i class="fas fa-chevron-down"></i>';
-                        }
-                        
-                        // Запускаем воспроизведение
-                        if (!isPlaying) {
-                            isPlaying = true;
-                            playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-                            player.classList.add('playing');
-                            startProgress();
-                        }
-                    }
-                });
-            });
-            
-            // Инициализация
-            loadTrack(currentTrackIndex);
-        });
-    </script>
+    <!-- Основной контент -->
+    <main class="main">
+        <div class="container">
+            <div class="main-content">
+                <!-- Левая колонка -->
+                <aside class="sidebar">
+                    <div class="profile-card">
+                        <div class="profile-avatar"></div>
+                        <h3>Иван Иванов</h3>
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <span class="stat-number">156</span>
+                                <span class="stat-label">друзей</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">89</span>
+                                <span class="stat-label">фото</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <nav class="side-nav">
+                        <a href="#" class="side-nav-item">Моя страница</a>
+                        <a href="#" class="side-nav-item">Новости</a>
+                        <a href="#" class="side-nav-item">Сообщения</a>
+                        <a href="#" class="side-nav-item">Друзья</a>
+                        <a href="#" class="side-nav-item">Группы</a>
+                        <a href="#" class="side-nav-item">Фотографии</a>
+                        <a href="#" class="side-nav-item">Музыка</a>
+                        <a href="#" class="side-nav-item">Видео</a>
+                    </nav>
+                </aside>
+
+                <!-- Центральная колонка -->
+                <div class="feed">
+                    <!-- Форма создания поста -->
+                    <div class="post-creator">
+                        <div class="post-creator-header">
+                            <div class="creator-avatar"></div>
+                            <input type="text" placeholder="Что у вас нового?" class="post-input">
+                        </div>
+                        <div class="post-creator-actions">
+                            <button class="action-btn">Фото</button>
+                            <button class="action-btn">Видео</button>
+                            <button class="action-btn">Запись</button>
+                            <button class="publish-btn">Опубликовать</button>
+                        </div>
+                    </div>
+
+                    <!-- Лента постов -->
+                    <div class="posts">
+                        <!-- Пример поста -->
+                        <div class="post">
+                            <div class="post-header">
+                                <div class="post-author">
+                                    <div class="author-avatar"></div>
+                                    <div class="author-info">
+                                        <span class="author-name">Мария Петрова</span>
+                                        <span class="post-time">2 часа назад</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                <p>Прекрасный день для прогулки в парке! 🌳☀️</p>
+                                <div class="post-image"></div>
+                            </div>
+                            <div class="post-actions">
+                                <button class="like-btn">Нравится</button>
+                                <button class="comment-btn">Комментировать</button>
+                                <button class="share-btn">Поделиться</button>
+                            </div>
+                        </div>
+
+                        <!-- Еще один пост -->
+                        <div class="post">
+                            <div class="post-header">
+                                <div class="post-author">
+                                    <div class="author-avatar"></div>
+                                    <div class="author-info">
+                                        <span class="author-name">Алексей Смирнов</span>
+                                        <span class="post-time">5 часов назад</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                <p>Только что закончил новый проект! Очень доволен результатом. 💻🚀</p>
+                            </div>
+                            <div class="post-actions">
+                                <button class="like-btn">Нравится</button>
+                                <button class="comment-btn">Комментировать</button>
+                                <button class="share-btn">Поделиться</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Правая колонка -->
+                <aside class="right-sidebar">
+                    <div class="friends-online">
+                        <h3>Друзья онлайн</h3>
+                        <div class="friend">
+                            <div class="friend-avatar online"></div>
+                            <span class="friend-name">Анна К.</span>
+                        </div>
+                        <div class="friend">
+                            <div class="friend-avatar online"></div>
+                            <span class="friend-name">Сергей М.</span>
+                        </div>
+                        <div class="friend">
+                            <div class="friend-avatar online"></div>
+                            <span class="friend-name">Ольга В.</span>
+                        </div>
+                    </div>
+
+                    <div class="recommendations">
+                        <h3>Рекомендации</h3>
+                        <div class="recommendation">
+                            <div class="rec-avatar"></div>
+                            <span class="rec-name">Петр Сидоров</span>
+                            <button class="add-friend-btn">Добавить</button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
 </body>
 </html>
