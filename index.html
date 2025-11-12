@@ -1,163 +1,153 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MySocial - Ваша социальная сеть</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<title>iOS Chat</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>
+:root{
+  --bg:#000;
+  --bubble-me:#007aff;
+  --bubble-other:#2c2c2e;
+  --text-me:#fff;
+  --text-other:#fff;
+  --accent:#007aff;
+  --safe:env(safe-area-inset-bottom,20px);
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:#fff;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+
+/* ====== LOGIN SCREEN (iOS-style) ====== */
+.login{
+  position:fixed;inset:0;
+  background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:999;
+  transition:opacity .35s, transform .35s;
+}
+.login.hide{opacity:0;transform:scale(1.05);pointer-events:none;}
+.login h2{margin-bottom:24px;font-weight:600;font-size:24px;}
+.login input{
+  background:#1c1c1e;
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  padding:14px 18px;
+  width:260px;
+  font-size:17px;
+  text-align:center;
+}
+.login button{
+  margin-top:16px;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  padding:12px 0;
+  width:260px;
+  font-size:17px;font-weight:600;
+  cursor:pointer;
+}
+
+/* ====== CHAT STYLES (без изменений) ====== */
+.header{background:#1c1c1e;padding:12px 20px calc(12px + env(safe-area-inset-top,0));display:flex;align-items:center;gap:12px;border-radius:0 0 24px 24px;}
+.avatar{width:38px;height:38px;border-radius:50%;background:url(https://i.pravatar.cc/80?u=ios) center/cover;}
+.name{font-size:17px;font-weight:600;flex:1;}
+.status{font-size:14px;color:#8e8e93;}
+.messages{flex:1;overflow-y:auto;padding:16px 20px calc(16px + var(--safe));scroll-behavior:smooth;}
+.messages::-webkit-scrollbar{display:none;}
+.bubble{max-width:72%;padding:10px 14px;margin-bottom:6px;line-height:1.35;font-size:16px;position:relative;word-wrap:break-word;}
+.bubble.me{background:var(--bubble-me);color:var(--text-me);border-radius:18px 4px 18px 18px;margin-left:auto;}
+.bubble.other{background:var(--bubble-other);color:var(--text-other);border-radius:4px 18px 18px 18px;}
+.bubble .meta{font-size:12px;color:#8e8e93;margin-top:4px;text-align:right;}
+.inputBar{background:#1c1c1e;padding:8px 20px calc(8px + var(--safe));display:flex;align-items:flex-end;gap:8px;border-radius:24px 24px 0 0;}
+.inputBar textarea{flex:1;background:#2c2c2e;color:#fff;border:none;border-radius:18px;padding:10px 14px;font-size:17px;resize:none;max-height:100px;font-family:inherit;}
+.inputBar textarea:focus{outline:none;}
+.inputBar button{background:var(--accent);color:#fff;border:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;cursor:pointer;}
+.inputBar button svg{width:22px;height:22px;fill:#fff;}
+</style>
 </head>
 <body>
-    <!-- Шапка -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>MySocial</h1>
-                </div>
-                <div class="search">
-                    <input type="text" placeholder="Поиск">
-                </div>
-                <nav class="nav">
-                    <a href="#" class="nav-item active">Моя страница</a>
-                    <a href="#" class="nav-item">Друзья</a>
-                    <a href="#" class="nav-item">Сообщения</a>
-                    <a href="#" class="nav-item">Новости</a>
-                </nav>
-                <div class="user-menu">
-                    <div class="user-avatar"></div>
-                    <span class="user-name">Иван Иванов</span>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <!-- Основной контент -->
-    <main class="main">
-        <div class="container">
-            <div class="main-content">
-                <!-- Левая колонка -->
-                <aside class="sidebar">
-                    <div class="profile-card">
-                        <div class="profile-avatar"></div>
-                        <h3>Иван Иванов</h3>
-                        <div class="profile-stats">
-                            <div class="stat">
-                                <span class="stat-number">156</span>
-                                <span class="stat-label">друзей</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-number">89</span>
-                                <span class="stat-label">фото</span>
-                            </div>
-                        </div>
-                    </div>
+<!-- ===== LOGIN ===== -->
+<div class="login" id="login">
+  <h2>Ваше имя</h2>
+  <input id="userName" placeholder="Имя" autocomplete="off" maxlength="20">
+  <button id="enterBtn">Войти</button>
+</div>
 
-                    <nav class="side-nav">
-                        <a href="#" class="side-nav-item">Моя страница</a>
-                        <a href="#" class="side-nav-item">Новости</a>
-                        <a href="#" class="side-nav-item">Сообщения</a>
-                        <a href="#" class="side-nav-item">Друзья</a>
-                        <a href="#" class="side-nav-item">Группы</a>
-                        <a href="#" class="side-nav-item">Фотографии</a>
-                        <a href="#" class="side-nav-item">Музыка</a>
-                        <a href="#" class="side-nav-item">Видео</a>
-                    </nav>
-                </aside>
+<!-- ===== CHAT ===== -->
+<header class="header">
+  <div class="avatar"></div>
+  <div>
+    <div class="name">Чат</div>
+    <div class="status">онлайн</div>
+  </div>
+</header>
 
-                <!-- Центральная колонка -->
-                <div class="feed">
-                    <!-- Форма создания поста -->
-                    <div class="post-creator">
-                        <div class="post-creator-header">
-                            <div class="creator-avatar"></div>
-                            <input type="text" placeholder="Что у вас нового?" class="post-input">
-                        </div>
-                        <div class="post-creator-actions">
-                            <button class="action-btn">Фото</button>
-                            <button class="action-btn">Видео</button>
-                            <button class="action-btn">Запись</button>
-                            <button class="publish-btn">Опубликовать</button>
-                        </div>
-                    </div>
+<main class="messages" id="msgs"></main>
 
-                    <!-- Лента постов -->
-                    <div class="posts">
-                        <!-- Пример поста -->
-                        <div class="post">
-                            <div class="post-header">
-                                <div class="post-author">
-                                    <div class="author-avatar"></div>
-                                    <div class="author-info">
-                                        <span class="author-name">Мария Петрова</span>
-                                        <span class="post-time">2 часа назад</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="post-content">
-                                <p>Прекрасный день для прогулки в парке! 🌳☀️</p>
-                                <div class="post-image"></div>
-                            </div>
-                            <div class="post-actions">
-                                <button class="like-btn">Нравится</button>
-                                <button class="comment-btn">Комментировать</button>
-                                <button class="share-btn">Поделиться</button>
-                            </div>
-                        </div>
+<form class="inputBar" id="form">
+  <textarea id="inp" rows="1" placeholder="iMessage"></textarea>
+  <button aria-label="Send">
+    <svg viewBox="0 0 24 24"><path d="M3.6 2.3c-.4-.3-.9-.2-1.2.2l-.1.2v.2l2.6 9.7c.1.3.4.4.6.2l3.4-2.8-3.3-7.5zm18.2 9.8L6 21.5c-.4.3-.9.1-1-.4L2.1 5.8c-.1-.4.2-.8.6-.9l16.7-6.3c.4-.1.8.2.9.6.1.2 0 .4-.1.6l-5.5 12.3z"/></svg>
+  </button>
+</form>
 
-                        <!-- Еще один пост -->
-                        <div class="post">
-                            <div class="post-header">
-                                <div class="post-author">
-                                    <div class="author-avatar"></div>
-                                    <div class="author-info">
-                                        <span class="author-name">Алексей Смирнов</span>
-                                        <span class="post-time">5 часов назад</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="post-content">
-                                <p>Только что закончил новый проект! Очень доволен результатом. 💻🚀</p>
-                            </div>
-                            <div class="post-actions">
-                                <button class="like-btn">Нравится</button>
-                                <button class="comment-btn">Комментировать</button>
-                                <button class="share-btn">Поделиться</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<script>
+const $ = s => document.querySelector(s);
+const login   = $('#login');
+const userInp = $('#userName');
+const enter   = $('#enterBtn');
+const msgs    = $('#msgs');
+const inp     = $('#inp');
+const form    = $('#form');
 
-                <!-- Правая колонка -->
-                <aside class="right-sidebar">
-                    <div class="friends-online">
-                        <h3>Друзья онлайн</h3>
-                        <div class="friend">
-                            <div class="friend-avatar online"></div>
-                            <span class="friend-name">Анна К.</span>
-                        </div>
-                        <div class="friend">
-                            <div class="friend-avatar online"></div>
-                            <span class="friend-name">Сергей М.</span>
-                        </div>
-                        <div class="friend">
-                            <div class="friend-avatar online"></div>
-                            <span class="friend-name">Ольга В.</span>
-                        </div>
-                    </div>
+let myName = '';
 
-                    <div class="recommendations">
-                        <h3>Рекомендации</h3>
-                        <div class="recommendation">
-                            <div class="rec-avatar"></div>
-                            <span class="rec-name">Петр Сидоров</span>
-                            <button class="add-friend-btn">Добавить</button>
-                        </div>
-                    </div>
-                </aside>
-            </div>
-        </div>
-    </main>
+enter.addEventListener('click',loginHandler);
+userInp.addEventListener('keydown',e=>{if(e.key==='Enter')loginHandler();});
 
-    <script src="script.js"></script>
+function loginHandler(){
+  const n = userInp.value.trim();
+  if(!n) return;
+  myName = n;
+  login.classList.add('hide');
+  inp.focus();
+  addBubble(`👋 ${myName} вошёл(ла) в чат`,false,'system');
+}
+
+form.addEventListener('submit',e=>{
+  e.preventDefault();
+  if(!inp.value.trim()||!myName) return;
+  addBubble(inp.value.trim(),true);
+  inp.value='';inp.style.height='auto';
+  setTimeout(()=>addBubble(randomReply(),false),700);
+});
+
+inp.addEventListener('input',()=>{
+  inp.style.height='auto';
+  inp.style.height=inp.scrollHeight+'px';
+});
+
+function addBubble(text,isMe,meta){
+  const div=document.createElement('div');
+  div.className='bubble '+(isMe?'me':'other');
+  div.textContent=text;
+  if(meta!=='system'){
+    const small=document.createElement('div');
+    small.className='meta';
+    small.textContent=isMe?myName:'Собеседник';
+    div.appendChild(small);
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function randomReply(){
+  const pool=['Ого, прям как на айфоне!','Круто получилось 😎','Ещё бы тёмную тему... о, уже есть!','Попробуй отправить ещё'];
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+</script>
 </body>
 </html>
